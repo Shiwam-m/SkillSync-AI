@@ -1,0 +1,76 @@
+About the job
+About Us
+Crescenza Consulting Group (CCG) is a digital transformation partner specializing in low-code platforms, cloud solutions, AI, integrations, and automation. Since 2019, we’ve helped enterprises build scalable, production-ready systems using modern architectures and high-performing engineering teams.
+As we expand our AI capabilities, we’re looking for AI Engineers who can move beyond experimentation and build reliable, enterprise-grade AI solutions.
+
+
+Role Overview
+
+We are seeking a hands-on AI Engineer / AI Developer to design, build, deploy, and optimize AI-powered applications, automation workflows, and agent-based systems.
+This is an implementation-focused role. You will work closely with solution architects, product teams, and developers to translate AI designs into production-ready, scalable solutions.
+If you enjoy building real AI systems—not just demos—this role is for you. What You’ll Do
+
+
+AI Development & Automation
+
+Build and maintain Python-based AI applications, AI agents, and automation scripts
+Develop AI workflows using Azure OpenAI, Copilot APIs, and OpenAI-compatible services
+Implement agentic AI patterns (planning, tool-calling, memory, orchestration)
+Create reusable components for prompts, tools, APIs, and AI pipelines
+
+
+LLMs, RAG & Prompt Engineering
+
+Design, test, and optimize prompt templates for accuracy and reliability
+Build RAG pipelines using embeddings, vector stores, and document ingestion
+Apply techniques to reduce hallucinations and improve response quality
+
+
+Integrations & Systems
+
+Integrate AI services with internal and external systems using REST APIs
+Develop scripts for data processing, automation, and AI-assisted workflows
+Collaborate with frontend, backend, and low-code teams to embed AI features
+
+
+Quality & Performance
+
+Ensure code quality, scalability, and best practices
+Troubleshoot and optimize AI pipelines and automation workflows
+Write clear technical documentation and support knowledge transfer
+
+
+Required Skills & Qualifications
+
+3+ years of hands-on experience in Python development
+Strong knowledge of Python libraries (requests, pandas, json, async programming)
+Hands-on experience with Azure OpenAI, Copilot APIs, or similar LLM platforms
+Experience building AI agents or automation workflows
+Solid understanding of prompt engineering and AI workflows
+Experience integrating systems via REST APIs
+Familiarity with Git/GitHub and collaborative development
+
+
+Nice to Have
+
+Experience with Azure, AWS, or GCP
+Knowledge of Docker and Kubernetes
+Exposure to CI/CD pipelines or MLOps practices
+Experience with vector databases and embeddings
+
+
+Why Join CCG?
+
+Fully remote and flexible working model
+Opportunity to work on real enterprise AI use cases
+Strong focus on learning, innovation, and ownership
+Clear growth paths into Solution Architecture, Generative AI, MLOps, and Product roles
+Culture built on Integrity, Innovation, Collaboration, Respect, and Client Success
+How to Apply
+To Apply, fill out the form:
+
+👉 https://forms.clickup.com/9013950444/f/8cmbxzc-6093/S4ANHI2OCJMZHTNBCB
+Please include:
+Your resume
+Any GitHub repositories, AI projects, or demos (strongly preferred)
+👉 Candidates with hands-on, production AI experience will be prioritized.

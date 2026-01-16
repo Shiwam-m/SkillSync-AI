@@ -1,0 +1,13 @@
+streamlit==1.53.0
+langchain==0.3.0
+langchain-community==0.3.0
+langchain-core==0.3.63
+langchain-openai==0.3.19
+langchain-huggingface==0.1.2
+faiss-cpu==1.13.2
+PyPDF2==3.0.1
+sentence-transformers==5.2.0
+torch==2.5.1
+pandas==2.3.3
+matplotlib==3.8.2
+python-dotenv==1.2.1
