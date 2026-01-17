@@ -31,10 +31,19 @@ class ResumeAnalysisAgent:
         self.cutoff_score = cutoff_score
 
         # LOCAL EMBEDDINGS
-        self.embeddings = HuggingFaceEmbeddings(
-            model_name="all-MiniLM-L6-v2",
-            model_kwargs={'device': 'cpu'}
-        )
+        # self.embeddings = HuggingFaceEmbeddings(
+        #     model_name="all-MiniLM-L6-v2",
+        #     model_kwargs={'device': 'cpu'}
+        # )
+
+        try:
+            self.embeddings = HuggingFaceEmbeddings(
+                model_name="sentence-transformers/all-MiniLM-L6-v2"
+            )
+        except Exception as e:
+            print(f"Error loading embeddings: {e}")
+            self.embeddings = None
+
 
         # OPENAI CONFIG
         if self.api_key:
@@ -458,7 +467,7 @@ class ResumeAnalysisAgent:
         """
         Generate actionable suggestions to improve the resume.
         Args:
-            improvement_areas (list): List of areas to improve, e.g., ["Skills Highlighting", "Experience"]
+            improvement_area (list): List of areas to improve, e.g., ["Skills Highlighting", "Experience"]
             target_role (str): Optional target role/job title for context
 
         Returns:
@@ -578,7 +587,7 @@ class ResumeAnalysisAgent:
                                 }
 
                             elif area and "specific" in imporovements[area]:
-                                if line.strip().startwith("- "):
+                                if line.strip().startswith("- "):
                                     imporovements[area]["specific"].append(line.strip()[2:])
                                 elif not imporovements[area]['description']:
                                     imporovements[area]["description"] += line.strip()

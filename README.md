@@ -27,11 +27,10 @@ Designed with a modern "Indigo & Slate" minimal interface, this tool provides da
     - **Audit Mode:** Performs semantic scoring across specific technical competencies.
     - **Q&A Mode:** Uses a RetrievalQA chain to provide grounded answers based only on the uploaded document.
 
-## 🚀 Deployment & CI/CD Pipeline
-This project is containerized with Docker and deployed on AWS using a fully automated CI/CD pipeline via GitHub Actions.
-- **Containerization:** Docker (Multi-stage builds)
-- **CI/CD:** GitHub Actions (Automated testing and deployment)
-- **Cloud:** Optimized for deployment on AWS (EC2/ECS) or Streamlit Cloud.
+## 🚀 Deployment (Render)
+This project is optimized for Render.
+- **Build Command:** pip install -r requirements.txt
+- **Start Command:** streamlit run app.py
 
 
 ## ⚙️ Installation & Setup
@@ -41,7 +40,7 @@ This project is containerized with Docker and deployed on AWS using a fully auto
 - An OpenAI API Key
 
 ### 2. Clone the Repository
-    git clone https://github.com/yourusername/skillsync-ai.git
+    git clone https://github.com/Shiwam-m/SkillSync-AI
     cd skillsync-ai
 
 ### 3. Setup Virtual Environment
