@@ -5,32 +5,34 @@ Designed with a modern "Indigo & Slate" minimal interface, this tool provides da
 
 ## 🚀 Key Features
 - **Semantic Tech-Audit:** Scores resumes (0-100) against industry-standard IT roles or custom Job Descriptions (JDs) using semantic vector similarity.
-- **Contextual RAG Engine:** Ask specific questions about a candidate's history, such as "Does the applicant have production experience with AWS?" or "Extract their leadership achievements."
+- **Contextual RAG Engine:** Ask specific questions about a candidate's history, such as "Does the applicant have production experience with AWS?"
 - **AI Interview Architect:** Generates personalized Technical, Scenario-based, and Behavioral questions based specifically on the candidate’s unique background.
-- **ATS Optimization Engine:** Identifies technical gaps and provides "Before & After" examples to enhance resume formatting and content for Applicant Tracking Systems.
+- **ATS Optimization Engine:** Identifies technical gaps and provides "Before & After" examples to enhance resume formatting for Applicant Tracking Systems.
 - **Dynamic Improvement Engine:** Provides actionable suggestions to fix resume weaknesses identified during the audit.
 - **Enterprise UI:** A minimal, professional dashboard designed for high-end IT recruitment environments.
+
 
 ## 🛠️ Tech Stack
 - **Frontend:** Streamlit (Custom Indigo/Slate Theme)
 - **Orchestration:** LangChain 0.3 (RetrievalQA, Vector Stores, Text Splitters)
-- **LLM:** OOpenAI GPT-4o (Reasoning & Generation)
-- **Embeddings:** HuggingFace all-MiniLM-L6-v2 (Free & Local Processing)
+- **LLM:** OpenAI GPT-4o (Reasoning & Generation)
+- **Embeddings:** HuggingFace `all-MiniLM-L6-v2` (Local Processing)
 - **Vector Store:** FAISS (Facebook AI Similarity Search)
-- **PDF Processing:** PyPDF2 (PDF) and Python IO (TXT)
+- **PDF Processing:** PyPDF2
+- **Deployment:** Docker & Hugging Face Spaces
+
 
 ## 🏗️ Architecture Workflow
 1. **Ingestion:** Extracts raw text from PDF/TXT resumes using specialized parsers.
-2. **Vectorization:** Splits content into semantic chunks. These are converted into high-dimensional vectors via Local HuggingFace Embeddings (saving API costs).
+2. **Vectorization:** Splits content into semantic chunks converted into high-dimensional vectors via local embeddings.
 3. **Storage:** Chunks are indexed in a local FAISS vector store for sub-second retrieval.
-4. **Intelligence Layer:**
+4. **Intelligence Layer:** 
     - **Audit Mode:** Performs semantic scoring across specific technical competencies.
-    - **Q&A Mode:** Uses a RetrievalQA chain to provide grounded answers based only on the uploaded document.
+    - **Q&A Mode:** Uses a RetrievalQA chain to provide grounded answers based only on the document.
 
-## 🚀 Deployment (Render)
-This project is optimized for Render.
-- **Build Command:** pip install -r requirements.txt
-- **Start Command:** streamlit run app.py
+
+## 🚀 Deployment (Hugging Face Spaces)
+This project is containerized with **Docker** and deployed on **Hugging Face Spaces** for high-performance AI hosting.
 
 
 ## ⚙️ Installation & Setup
@@ -51,7 +53,7 @@ This project is optimized for Render.
     source venv/bin/activate
 
 ### 4. Install Dependencies
-    pip install streamlit langchain langchain-openai faiss-cpu PyPDF2 matplotlib pandas langchain-huggingface sentence-transformers
+    pip install -r requirements.txt
 
 ### 5. Run the Application
     streamlit run app.py

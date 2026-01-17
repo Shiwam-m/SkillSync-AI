@@ -1,6 +1,7 @@
 import streamlit as st
 import atexit
-import ui
+import ui as ui
+import os
 from agent import ResumeAnalysisAgent
 
 
@@ -77,15 +78,21 @@ def setup_agent(config):
     Returns:
         ResumeAnalysisAgent or None
     """
-    if not config['openai_api_key']:
-        st.error("Please enter your OpenAI API key in the sidebar.")
+
+    sidebar_key = config.get('openai_api_key')
+    env_key = os.environ.get('OPENAI_API_KEY')
+    final_key = sidebar_key if sidebar_key else env_key
+    
+    if not final_key:
+        st.error("Please enter your OpenAI API key in the sidebar or add it as a Secret in Settings.")
         return None
 
     # Initialize or update the agent
     if st.session_state.resume_agent is None:
-        st.session_state.resume_agent = ResumeAnalysisAgent(api_key=config["openai_api_key"])
+        st.session_state.resume_agent = ResumeAnalysisAgent(api_key=final_key)
     else:
-        st.session_state.resume_agent.api_key = config["openai_api_key"]
+        st.session_state.resume_agent.api_key = final_key
+        
     return st.session_state.resume_agent
 
 
