@@ -212,35 +212,69 @@ def apply_custom_css():
         """,
         unsafe_allow_html=True
     )
+ 
 
 
 def setup_sidebar():
     with st.sidebar:
         st.markdown("<h2 style='margin:0;'>SkillSync <span style='color:#6366f1;'>AI</span></h2>", unsafe_allow_html=True)
-        st.caption("v1.2.0 | Admin Console")
+        st.caption("v1.4.0 | Multi-Model Intelligence")
         st.markdown("---")
         
-        st.subheader("Authentication")
-        api_key = st.text_input(
-            "OpenAI API Key", 
-            type="password", 
-            help="Get your key from platform.openai.com"
+        st.subheader("Model Configuration")
+        
+        # 1. Select Provider 
+        provider = st.selectbox(
+            "Select AI Provider", 
+            ["OpenAI", "Google Gemini", "Anthropic", "Groq (Llama/Mistral)"]
         )
-
-        if api_key:
-            st.success("API Key Loaded!")
-        else:
-            st.warning("Please enter API Key to start.")
-
-        st.markdown("---")
-        st.info("System optimized for GPT-4o & Semantic Benchmarking.")
         
+        # 2. Dynamic Input & Model Selection 
+        api_key = ""
+        model_name = ""
+        
+        if provider == "OpenAI":
+            api_key = st.text_input("OpenAI API Key", type="password", help="Get it from platform.openai.com")
+            # 2nd Option: gpt-4-turbo (High reasoning) or gpt-3.5-turbo (Cheap/Fast)
+            model_name = st.selectbox("Select Model", ["gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo"])
+            
+        elif provider == "Google Gemini":
+            api_key = st.text_input("Google API Key", type="password", help="Get it from aistudio.google.com")
+            # 2nd Option: gemini-1.5-flash (Extremely fast and free tier available)
+            model_name = st.selectbox("Select Model", ["gemini-1.5-pro", "gemini-1.5-flash"])
+            
+        elif provider == "Anthropic":
+            api_key = st.text_input("Anthropic API Key", type="password", help="Get it from console.anthropic.com")
+            # 2nd Option: claude-3-haiku (Fastest and cheapest Claude model)
+            model_name = st.selectbox("Select Model", ["claude-3-5-sonnet-20240620", "claude-3-haiku-20240307"])
+            
+        elif provider == "Groq (Llama/Mistral)":
+            api_key = st.text_input("Groq API Key", type="password", help="Get it for FREE from console.groq.com")
+            # 2nd Option: llama3-8b (The fastest model in the world right now)
+            model_name = st.selectbox("Select Model", ["llama-3.1-70b-versatile", "llama3-8b-8192", "mixtral-8x7b-32768"])
+
+        # --- Status Messages ---
+        if api_key:
+            st.success(f"{provider} Connected!")
+        else:
+            st.warning(f"Please enter your {provider} API Key.")
+
+        st.markdown("---")        
+        st.info(f"System optimized for {model_name} & Semantic Benchmarking.")
         with st.expander("How to use?"):
-            st.write("1. Enter OpenAI API Key")
+            st.write(f"1. Get your {provider} API Key")
             st.write("2. Upload Resume (PDF)")
             st.write("3. Select Target Role")
             st.write("4. Click Analyze")
-    return {"openai_api_key": api_key} 
+            
+    # Return everything for the agent setup
+    return {
+        "provider": provider, 
+        "openai_api_key": api_key, 
+        "model_name": model_name
+    }
+
+
 
 
 def role_selection_section(role_requirements):
@@ -741,3 +775,46 @@ def create_tabs():
         "Resume Improvement",
         "Improved Resume"
     ])
+
+
+def batch_ranking_section(has_agent, rank_func=None, role_requirements=None):
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.subheader("Batch Resume Ranking (Top 5)")
+    st.info("Upload up to 5 resumes to compare them against the selected role requirements.")
+
+    uploaded_files = st.file_uploader(
+        "Upload up to 5 Resumes", 
+        type=["pdf"], 
+        accept_multiple_files=True,
+        key="batch_uploader"
+    )
+
+    if uploaded_files:
+        if len(uploaded_files) > 5:
+            st.error("Please upload a maximum of 5 resumes.")
+            return
+
+        if st.button("Rank Resumes", type="primary"):
+            if not rank_func:
+                st.error("Analysis function not found.")
+                return
+
+            with st.spinner(f"Analyzing {len(uploaded_files)} resumes..."):
+                results = rank_func(uploaded_files)
+                
+                if results:
+                    st.markdown("### 🏆 Candidate Leaderboard")
+                    df = pd.DataFrame(results)
+                    df.index = df.index + 1 
+                    st.table(df)
+
+                    for i, res in enumerate(results):
+                        color = "#10b981" if res['score'] >= 75 else "#94a3b8"
+                        st.markdown(f"""
+                        <div style="padding:10px; border-radius:8px; background-color:#1e293b; border-left: 5px solid {color}; margin-bottom:10px;">
+                            <span style="font-weight:bold; color:{color}">#{i+1}</span> | 
+                            <strong>{res['candidate_name']}</strong> - Score: {res['score']}% 
+                            <br><small>Strengths: {res['top_strengths']}</small>
+                        </div>
+                        """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)

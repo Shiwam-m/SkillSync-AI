@@ -15,27 +15,37 @@ from langchain_openai import ChatOpenAI
 from langchain_huggingface import HuggingFaceEmbeddings
 
 
+# --- TOP OF agent.py ---
+from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_anthropic import ChatAnthropic
+from langchain_groq import ChatGroq
+
+
 # --------------------------------------------------------------
 # Resume Analysis Agent
 # --------------------------------------------------------------
 class ResumeAnalysisAgent:
-    def __init__(self, api_key=None, model_name="gpt-4o", cutoff_score=75):
-        """
-        Initialize the ResumeAnalysisAgent.
-        Args:
-            api_key (str): API key for OpenAI or other LLM services.
-            cutoff_score (int, optional): Minimum score to consider a candidate selected. Defaults to 75.
-        """
+    def __init__(self, provider="OpenAI", api_key=None, model_name=None, cutoff_score=75):
         self.api_key = api_key
+        self.provider = provider
         self.model_name = model_name
-        self.cutoff_score = cutoff_score
+        self.cutoff_score = cutoff_score  # FIXED: Added missing attribute
 
-        # LOCAL EMBEDDINGS
-        # self.embeddings = HuggingFaceEmbeddings(
-        #     model_name="all-MiniLM-L6-v2",
-        #     model_kwargs={'device': 'cpu'}
-        # )
+        # --- Multi-Model Router ---
+        try:
+            if provider == "OpenAI":
+                self.llm = ChatOpenAI(api_key=api_key, model=model_name, temperature=0.1)
+            elif provider == "Google Gemini":
+                self.llm = ChatGoogleGenerativeAI(google_api_key=api_key, model=model_name, temperature=0.1)
+            elif provider == "Anthropic":
+                self.llm = ChatAnthropic(anthropic_api_key=api_key, model=model_name, temperature=0.1)
+            elif provider == "Groq (Llama/Mistral)":
+                self.llm = ChatGroq(groq_api_key=api_key, model=model_name, temperature=0.1)
+        except Exception as e:
+            print(f"LLM Initialization Error: {e}")
 
+        # --- Embeddings logic ---
         try:
             self.embeddings = HuggingFaceEmbeddings(
                 model_name="sentence-transformers/all-MiniLM-L6-v2"
@@ -44,19 +54,9 @@ class ResumeAnalysisAgent:
             print(f"Error loading embeddings: {e}")
             self.embeddings = None
 
-
-        # OPENAI CONFIG
-        if self.api_key:
-            self.llm = ChatOpenAI(
-                openai_api_key=self.api_key,
-                model=self.model_name,
-                temperature=0.1,
-                timeout=60
-            )
-
-        # Internal state 
+        # Internal state
         self.resume_text = None
-        self.rag_vectorstore= None 
+        self.rag_vectorstore = None 
         self.analysis_result = None 
         self.jd_text = None 
         self.extracted_skills = None 
@@ -121,30 +121,13 @@ class ResumeAnalysisAgent:
             return ""
 
 
-    # -------------------------------------------------------------------------
-    # Vector Store Methods
-    # -------------------------------------------------------------------------
     def create_rag_vector_store(self, text):
-        """
-        Create a vector store for Retrieval-Augmented Generation (RAG).
-
-        Args:
-            text (str): Resume text.
-
-        Returns:
-            FAISS: Vector store object.
-        """
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000, 
-            chunk_overlap=200,
-            length_function=len,
-        )
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         chunks = text_splitter.split_text(text)
-        """embedding model understand the relation b\w the chunks
-            This is temp vector stre not in file 
-        """
+        # Fixed backslash warning using raw string r""
+        r"""embedding model understands the relation between the chunks"""
         vectorstore = FAISS.from_texts(chunks, self.embeddings)
-        return vectorstore  
+        return vectorstore
 
     
     def create_vector_store(self, text):
@@ -728,3 +711,20 @@ class ResumeAnalysisAgent:
                 os.unlink(self.improved_resume_path)
         except Exception as e:
             print(f"Error cleaning up temporary files: {e}")
+
+
+    def rank_multiple_resumes(self, resume_files, role_requirements=None, custom_jd=None):
+        rankings = []
+        for file in resume_files:
+            # This calls your existing semantic analysis logic for each file
+            result = self.analyze_resume(file, role_requirements, custom_jd)
+            if result:
+                rankings.append({
+                    "candidate_name": file.name,
+                    "score": result.get("overall_score", 0),
+                    "status": "Shortlisted" if result.get("selected") else "Rejected",
+                    "top_strengths": ", ".join(result.get("strengths", [])[:3]),
+                    "missing_skills": ", ".join(result.get("missing_skills", [])[:3])
+                })
+        # Sort candidates by highest score
+        return sorted(rankings, key=lambda x: x['score'], reverse=True)

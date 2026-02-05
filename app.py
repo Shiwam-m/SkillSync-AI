@@ -72,28 +72,38 @@ if 'analysis_result' not in st.session_state: st.session_state.analysis_result =
 # ------------------------------------------------------------------------------
 def setup_agent(config):
     """
-    Initialize the ResumeAnalysisAgent with the provided API key.
-    Args:
-        config (dict): Configuration dictionary containing 'openai_api_key'. 
-    Returns:
-        ResumeAnalysisAgent or None
+    Initialize or update the ResumeAnalysisAgent based on sidebar config.
     """
+    provider = config.get('provider')
+    # This must match the key name in ui.py (which is 'openai_api_key')
+    api_key = config.get('openai_api_key', "").strip() 
+    model_name = config.get('model_name')
 
-    sidebar_key = config.get('openai_api_key')
-    env_key = os.environ.get('OPENAI_API_KEY')
-    final_key = sidebar_key if sidebar_key else env_key
-    
-    if not final_key:
-        st.error("Please enter your OpenAI API key in the sidebar or add it as a Secret in Settings.")
+    if not api_key:
         return None
 
-    # Initialize or update the agent
+    # Re-initialize if agent is None OR if settings changed
     if st.session_state.resume_agent is None:
-        st.session_state.resume_agent = ResumeAnalysisAgent(api_key=final_key)
+        st.session_state.resume_agent = ResumeAnalysisAgent(
+            provider=provider, 
+            api_key=api_key, 
+            model_name=model_name
+        )
     else:
-        st.session_state.resume_agent.api_key = final_key
-        
+        # Check if config has changed to avoid unnecessary re-initialization
+        agent = st.session_state.resume_agent
+        if (agent.provider != provider or 
+            agent.model_name != model_name or 
+            agent.api_key != api_key):
+            
+            st.session_state.resume_agent = ResumeAnalysisAgent(
+                provider=provider, 
+                api_key=api_key, 
+                model_name=model_name
+            )
+            
     return st.session_state.resume_agent
+
 
 
 # --------------------------
@@ -238,26 +248,27 @@ def main():
         "Resume Q&A",
         "Interview Questions",
         "Resume Improvements",
-        "Improved Resume"
+        "Improved Resume", 
+        "Batch Ranking" # New Tab
     ])
 
     # --------------------------
     # Tab 1: Resume Analysis
     # --------------------------
     with tabs[0]:
+        # FIX: Capture role and save it to session state immediately
         role, custom_jd = ui.role_selection_section(ROLE_REQUIREMENTS)
+        st.session_state.selected_role = role # <--- ADD THIS LINE
+        
         uploaded_resume = ui.resume_upload_section()
-
         col1, col2, col3 = st.columns([1, 1, 1])
         with col2:
             if st.button("Analyze Resume", type='primary'):
                 if agent and uploaded_resume:
                     analyze_resume(agent, uploaded_resume, role, custom_jd)
 
-        # Display analysis result
         if st.session_state.analysis_result:
             ui.display_analysis_result(st.session_state.analysis_result)
-
     # --------------------------
     # Tab 2: Resume Q&A
     # --------------------------
@@ -308,6 +319,25 @@ def main():
         else:
             st.warning("Please upload and analyze a resume first in the 'Resume Analysis' tab.")
 
+        
+    # --------------------------
+    # Tab 6: Batch Ranking
+    # --------------------------
+    with tabs[5]:
+        if st.session_state.resume_agent:
+            # Use the role selected in Tab 1, or default to the first one
+            current_role = st.session_state.get('selected_role', list(ROLE_REQUIREMENTS.keys())[0])
+            
+            # Pass the rank function to the UI
+            ui.batch_ranking_section(
+                has_agent=True,
+                rank_func=lambda files: st.session_state.resume_agent.rank_multiple_resumes(
+                    files, 
+                    role_requirements=ROLE_REQUIREMENTS[current_role]
+                )
+            )
+        else:
+            st.warning("Please provide an API Key in the sidebar first.")
 
 if __name__ == "__main__":
     main()

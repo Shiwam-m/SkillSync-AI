@@ -1,16 +1,29 @@
-streamlit==1.53.0
+# --- Core Framework ---
+streamlit>=1.40.0
 langchain==0.3.12
 langchain-community==0.3.12
-langchain-core==0.3.63
+langchain-core>=0.3.63,<0.4.0
 langchain-text-splitters==0.3.8
-langchain-openai==0.3.19
-langchain-huggingface==0.1.2
-faiss-cpu==1.13.2
-PyPDF2==3.0.1
-sentence-transformers==3.3.1
+langsmith>=0.2.11,<0.3.0
+
+# --- AI Model Providers ---
+langchain-openai~=0.3.0
+langchain-google-genai~=2.1.0
+langchain-anthropic~=0.3.0
+langchain-groq~=0.3.0
+langchain-huggingface~=0.1.2
+
+# --- Vector Store & Embeddings ---
+faiss-cpu>=1.9.0
+sentence-transformers>=3.0.0
 torch
-pandas==2.3.3
-matplotlib==3.8.2
-python-dotenv==1.2.1
-langsmith==0.1.147
-google-ai-generativelanguage==0.6.15
+
+# --- Document Processing ---
+PyPDF2>=3.0.0
+
+# --- Data & Visualization ---
+pandas>=2.0.0
+matplotlib>=3.8.0
+
+# --- Utils ---
+python-dotenv>=1.0.0
