@@ -1,7 +1,15 @@
 # 🤖 SkillSync AI: Next-Gen Recruitment Intelligence System
+
+[![Python Version](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.40-FF4B4B)](https://streamlit.io/)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-yellow)](https://huggingface.co/spaces/Shiwammaddy/SkillSync-AI)
+
 SkillSync AI is a professional-grade recruitment assistant that leverages Large Language Models (LLMs) and Retrieval-Augmented Generation (RAG) to automate resume screening, technical interview preparation, and ATS optimization.     
 Designed with a modern "Indigo & Slate" minimal interface, this tool provides data-driven insights for high-end IT recruitment environments.
 
+## 🔗 Live Demo
+**Try the app here:** [SkillSync AI on Hugging Face Spaces](https://shiwammaddy-skillsync.hf.space)
 
 ## 🚀 Key Features
 - **Multi-Model Intelligence:** Model-agnostic architecture supporting OpenAI (GPT-4o), Google Gemini (1.5 Pro), Anthropic (Claude 3.5), and Groq (Llama 3.1).
